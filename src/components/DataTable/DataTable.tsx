@@ -6,33 +6,59 @@ export interface DataTableProbs {
     columnData: [],
     searchField: string,
     isSortable: boolean,
-    isFilter: boolean
+    isFilter: boolean,
+    isReOrderable: boolean
 
 }
 const DataTable: any = (props: DataTableProbs) => {
 
+    const [initialWholeHeaderData, setInitialWholeHeaderData] = useState(props?.headerData);
+    const [initialWholeColumnData, setInitialWholeColumnData] = useState(props?.columnData);
     const [headerData, setHeaderData] = useState(props?.headerData);
     const [columnData, setColumnData] = useState(props?.columnData);
     const [isSortable, setIsSortable] = useState(props?.isSortable);
     const [isFilter, setIsFilter] = useState(props?.isFilter);
-    const [searchField, setSearchField] = useState(props?.searchField);
+    const [isReOrderable, setIsReOrderable] = useState(props?.isReOrderable)
+    const [searchField, setSearchField] = useState('name');
     const [filterText, setFilterText] = useState('');
 
-    useEffect(() => {
-        console.log(headerData);
-        debugger;
-        console.log(columnData);
-    });
+    const [rowData, setRowData] = useState('');
+
+    useEffect(()=>{
+        let updatedColumnData : any = [];
+        initialWholeColumnData.map((eachColumnDt: any) =>{
+            if(eachColumnDt?.[searchField]?.includes?.(filterText)) {
+                updatedColumnData.push(eachColumnDt);
+            }
+        });
+        setColumnData(updatedColumnData);
+    },[filterText]);
 
     const updateFilter = (e: any) => {
         const val = e?.target?.value;
-        debugger;
-        console.log(val);
+        setFilterText(val);
+    }
+
+    //Triggered When re-ordering the row started...
+    const dragStart = (event: any) => {
+        setRowData(event.target);
+    }
+
+    //Triggered When re-ordering the row completed...
+    const dragOver =(event: any) => {
+        var e = event;
+        e.preventDefault(); 
+
+        let children= Array.from(e.target.parentNode.parentNode.children);
+        if(children.indexOf(e.target.parentNode)>children.indexOf(rowData))
+          e.target.parentNode.after(rowData);
+        else
+          e.target.parentNode.before(rowData);
     }
 
     return (<>
         {
-            (headerData?.length > 0 && columnData?.length > 0) &&
+            (headerData?.length > 0) &&
             <div className='rct-custom-datatable-component-mainwrapper'>
                 <div className='rct-custom-datatable-header-main-wrapper'>
                     <div className='rct-custom-datatable-header-cnt'>{'Header'}</div>
@@ -53,7 +79,7 @@ const DataTable: any = (props: DataTableProbs) => {
                             </thead>
                             <tbody id="table-content">
                                 {columnData.map((ealColData: any, ealColDataIndex: any) => (
-                                    <tr>
+                                    <tr className ={`${isReOrderable?'rct-row-re-orderable':''}`} draggable={isReOrderable} onDragStart={dragStart} onDragOver={dragOver}>
                                         {headerData.map((colHeaderDt: any, colHeaderDtIndex: any) => (
                                             <td>{ealColData[colHeaderDt.field]}</td>
                                         ))}

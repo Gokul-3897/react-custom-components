@@ -8,11 +8,12 @@ function App() {
     headerData: dataTableHeaderData,
     columnData: dataTableColumnData,
     isSortable: true,
-    isFilter: true
+    isFilter: true,
+    isReOrderable: true
   }
   return (
     <div className="App">
-      <DataTable headerData={dataTableHeaderData} columnData={dataTableColumnData} isSortable ={true} isFilter = {true} />
+      <DataTable headerData={dataTableHeaderData} columnData={dataTableColumnData} isSortable ={true} isFilter = {true} isReOrderable={true} />
     </div>
   );
 }

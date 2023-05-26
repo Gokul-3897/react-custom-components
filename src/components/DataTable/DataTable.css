@@ -84,6 +84,10 @@ footer .heart {
   color: #dc143c;
 }
 
+.rct-row-re-orderable {
+  cursor:all-scroll;
+}
+
 .rct-custom-datatable-component-mainwrapper {
     .rct-custom-datatable-header-main-wrapper {
 
